@@ -1,6 +1,12 @@
+# vscode crap
+.vscode
+
 # python virtual env files
 bin/
 lib/
 pyvenv.cfg
+
+# saved data
+data/*
 
 
