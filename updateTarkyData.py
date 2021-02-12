@@ -22,7 +22,22 @@ class TarkovWiki:
       {
         'url': 'https://escapefromtarkov.gamepedia.com/Armor_vests',
         'url_save': 'armor.html'
-      }
+      },
+      'backpacks':
+      {
+        'url': 'https://escapefromtarkov.gamepedia.com/Backpacks',
+        'url_save': 'backpack.html'
+      },
+      'rigs':
+      {
+        'url': 'https://escapefromtarkov.gamepedia.com/Chest_rigs',
+        'url_save': 'rig.html'
+      },
+      'headwear':
+      {
+        'url': 'https://escapefromtarkov.gamepedia.com/Headwear',
+        'url_save': 'headwear.html'
+      },
     }
   
   @staticmethod
@@ -55,136 +70,75 @@ class TarkovWiki:
         page_text = f.read()
     
     return page_text
-
-class TarkovMap:
-  def __init__(self, parsed_map_data):
-    self.maps = []
-    self.name = parsed_map_data[1]
-    self.duration = parsed_map_data[2]
-    self.players = parsed_map_data[3]
-    self.enemies = parsed_map_data[4]
-    self.release_state = parsed_map_data[5]
   
-def parse_map_data():
-  page_text = TarkovWiki.get_page_HTML('maps', over_write = False)
-  page = BeautifulSoup(page_text, 'lxml')
-  table_row = page.find('table', class_="wikitable").findAll('tr')
+def parse_data(data_type, over_write):
+  tables = get_data_from_html(data_type, over_write)
 
-  map_data = []
-  maps = []
+  items = []
 
-  for row in table_row:
-    map_data.append([r.get_text().strip() for r in row.findAll('th')])
+  for table in tables:
 
-  for m in map_data:
-    if m[0] == 'Banner':
+    item_class = trim_text(table.find_previous('h1').get_text()) if table.find_previous('h1') else 'None'
+    item_type = trim_text(table.find_previous('h2').get_text()) if table.find_previous('h2') else 'None'
+    item_subtype = trim_text(table.find_previous('h3').get_text()) if table.find_previous('h3') else 'None'
+
+    parsed_classifications = (item_class, item_type, item_subtype)
+
+    if is_skippable_table(parsed_classifications):
       continue
 
-    maps.append(TarkovMap(m))
-
-  # List of Released Maps
-  pp.pprint([mp.name for mp in maps if mp.release_state == 'Released'])
-
-def parse_weapon_data():
-  page_text = TarkovWiki.get_page_HTML('weapons', over_write = False)
-  page = BeautifulSoup(page_text, 'lxml')
-
-  tables = page.findAll('table', class_="wikitable")
-  weapons = {}
-  
-  for table in tables:
-    weapon_type = trim_text(table.find_previous('h2').get_text())
-    weapon_subtype = trim_text(table.find_previous('h3').get_text())
-    
-    weapon_category = "{0}-{1}".format(weapon_type, weapon_subtype).replace(' ', '_')
-
-    weapons[weapon_category] = []
-
-    # Collect the weapons of each type
-    weapon_rows = table.findAll('tr')
+    table_rows = table.findAll('tr')
 
     # First row should be a header, if not, EXPLODE
-    if not is_header_row(weapon_rows[0], 'th', 2):
-      pprint.pprint(weapon_rows[0])
+    if not is_header_row(table_rows[0], 'th', 2):
+      pprint.pprint(table_rows[0])
       raise(Exception('This does not seem to be a header row'))
-    
-    weapon_metadata = get_data_items(weapon_rows[0], 'th')
 
-    # Now everythng else should be data about the weapons and it should follow the metadata
-    for weapon_row in weapon_rows[1:]:
-      weapon = {}
-      weapon_data = get_data_items(weapon_row, ['td', 'th'])
-      for datum in weapon_data:
-        weapon[weapon_metadata[weapon_data.index(datum)]] = datum
+    # Parse out item metadata
+    item_metadata = get_data_items(table_rows[0], 'th')
 
-      weapons[weapon_category].append(weapon)
+    # Parse out item data
+    for table_row in table_rows[1:]:
+      item = {}
+      # Add item type and subtype
+      item['parsed_class'] = item_class
+      item['parsed_type'] = item_type
+      item['parsed_subtype'] = item_subtype
 
-    # break after the first table
-    #break
+      item_data = get_data_items(table_row, ['td', 'th'])
+      for datum in item_data:
+        item[item_metadata[item_data.index(datum)]] = datum
 
-  weapon_categories_to_select = [   
-    'Primary_weapons-Assault_rifles',
-    'Primary_weapons-Assault_carbines',
-    'Primary_weapons-Light_machine_guns',
-    'Primary_weapons-Submachine_guns',
-    'Primary_weapons-Shotguns',
-    'Primary_weapons-Designated_marksman_rifles',
-    'Primary_weapons-Sniper_rifles',
-    'Primary_weapons-Grenade_launchers',
-    'Secondary_weapons-Pistols',
-  ]
+      items.append(item)
 
-  #pp.pprint([weapon_type for weapon_type in weapons.keys() if weapon_type in weapon_categories_to_select]) #all weapon types
-  pp.pprint({ weapon_type: [ weapon['Name'] for weapon in weapons[weapon_type]] for weapon_type in weapons if weapon_type in weapon_categories_to_select})
+  return items
 
-def parse_ammo_data():
-  pass
-
-def parse_armor_data():
-  page_text = TarkovWiki.get_page_HTML('armor', over_write = False)
+def get_data_from_html(page_type, over_write):
+  page_text = TarkovWiki.get_page_HTML(page_type, over_write)
   page = BeautifulSoup(page_text, 'lxml')
+  return page.findAll('table', class_="wikitable")
 
-  tables = page.findAll('table', class_="wikitable")
-  armors = []
+def is_skippable_table(pc):
+  return is_skippable_armor_table(pc[1]) or \
+    is_skippable_weapon_table(pc[1]) or \
+    is_skippable_backpack_table(pc[1]) or \
+    is_skippable_rig_table(pc[0])
 
-  for table in tables: 
-    # Skip upcoming body armor table
-    if table.find_previous('h2') and trim_text(table.find_previous('h2').get_text()) == 'Upcoming Body Armor':
-        continue
+def is_skippable_armor_table(item_type):
+  skippable_types = ['Upcoming Body Armor', ]
+  return item_type in skippable_types
 
-    # Collect the armors of each type
-    armor_rows = table.findAll('tr')
+def is_skippable_weapon_table(item_type):
+  skippable_types = ['Unconfirmed weapons', 'Upcoming weapons', 'Throwable weapons', 'Melee weapons', 'Stationary weapons']
+  return item_type in skippable_types
 
-    # First row should be a header, if not, EXPLODE
-    if not is_header_row(armor_rows[0], 'th', 2):
-      pprint.pprint(armor_rows[0])
-      raise(Exception('This does not seem to be a header row'))
+def is_skippable_backpack_table(item_type):
+  skippable_types = ['Upcoming backpacks']
+  return item_type in skippable_types
 
-    armor_metadata = get_data_items(armor_rows[0], 'th')
-
-    # Now everythng else should be data about the armors and it should follow the metadata
-    for armor_row in armor_rows[1:]:
-      armor = {}
-      armor_data = get_data_items(armor_row, ['td', 'th'])
-      for datum in armor_data:
-        armor[armor_metadata[armor_data.index(datum)]] = datum
-
-      armors.append(armor)
-
-    # break after the first table
-    #break
-
-  pp.pprint(armors)
-
-
-def parse_rig_data():
-  pass
-
-def parse_backpack_data():
-  pass
-
-def parse_helmet_data():
-  pass
+def is_skippable_rig_table(item_class):
+  skippable_types = ['Upcoming Chest Rigs', ]
+  return item_class in skippable_types
 
 def trim_text(input_string):
   trimmed = input_string.strip().replace(u'\xa0', u' ')
@@ -210,10 +164,18 @@ def get_data_items(bs_node, nodes):
   return metadata_items
 
 if __name__ == '__main__':
-  #parse_map_data() #done
-  #parse_weapon_data() #done
-  #parse_ammo_data()
-  parse_armor_data()
-  #parse_rig_data()
-  #parse_backpack_data()
-  #parse_helmet_data()
+  over_write = False
+
+  armor = parse_data('armor', over_write)
+  maps = parse_data('maps', over_write)
+  weapons = parse_data('weapons', over_write)
+  backpacks = parse_data('backpacks', over_write)
+  rig = parse_data('rigs', over_write)
+  headwear = parse_data('headwear', over_write)
+
+  pp.pprint(maps)
+  #pp.pprint(armor)
+  #pp.pprint(weapons)
+  #pp.pprint(backpacks)
+  #pp.pprint(rig)
+  #pp.pprint(headwear)
