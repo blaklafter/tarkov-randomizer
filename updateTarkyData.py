@@ -18,6 +18,11 @@ class TarkovWiki:
         'url': 'https://escapefromtarkov.gamepedia.com/Weapons',
         'url_save': 'weapon.html',
       },
+      'armor':
+      {
+        'url': 'https://escapefromtarkov.gamepedia.com/Armor_vests',
+        'url_save': 'armor.html'
+      }
     }
   
   @staticmethod
@@ -52,22 +57,13 @@ class TarkovWiki:
     return page_text
 
 class TarkovMap:
-  name = ""
-  features = ""
-  duration = ""
-  players = ""
-  enemies = ""
-  release_state = ""
-
-  maps = []
-  
   def __init__(self, parsed_map_data):
+    self.maps = []
     self.name = parsed_map_data[1]
     self.duration = parsed_map_data[2]
     self.players = parsed_map_data[3]
     self.enemies = parsed_map_data[4]
     self.release_state = parsed_map_data[5]
-
   
 def parse_map_data():
   page_text = TarkovWiki.get_page_HTML('maps', over_write = False)
@@ -141,7 +137,54 @@ def parse_weapon_data():
   #pp.pprint([weapon_type for weapon_type in weapons.keys() if weapon_type in weapon_categories_to_select]) #all weapon types
   pp.pprint({ weapon_type: [ weapon['Name'] for weapon in weapons[weapon_type]] for weapon_type in weapons if weapon_type in weapon_categories_to_select})
 
- 
+def parse_ammo_data():
+  pass
+
+def parse_armor_data():
+  page_text = TarkovWiki.get_page_HTML('armor', over_write = False)
+  page = BeautifulSoup(page_text, 'lxml')
+
+  tables = page.findAll('table', class_="wikitable")
+  armors = []
+
+  for table in tables: 
+    # Skip upcoming body armor table
+    if table.find_previous('h2') and trim_text(table.find_previous('h2').get_text()) == 'Upcoming Body Armor':
+        continue
+
+    # Collect the armors of each type
+    armor_rows = table.findAll('tr')
+
+    # First row should be a header, if not, EXPLODE
+    if not is_header_row(armor_rows[0], 'th', 2):
+      pprint.pprint(armor_rows[0])
+      raise(Exception('This does not seem to be a header row'))
+
+    armor_metadata = get_data_items(armor_rows[0], 'th')
+
+    # Now everythng else should be data about the armors and it should follow the metadata
+    for armor_row in armor_rows[1:]:
+      armor = {}
+      armor_data = get_data_items(armor_row, ['td', 'th'])
+      for datum in armor_data:
+        armor[armor_metadata[armor_data.index(datum)]] = datum
+
+      armors.append(armor)
+
+    # break after the first table
+    #break
+
+  pp.pprint(armors)
+
+
+def parse_rig_data():
+  pass
+
+def parse_backpack_data():
+  pass
+
+def parse_helmet_data():
+  pass
 
 def trim_text(input_string):
   trimmed = input_string.strip().replace(u'\xa0', u' ')
@@ -167,7 +210,10 @@ def get_data_items(bs_node, nodes):
   return metadata_items
 
 if __name__ == '__main__':
-  #parse_map_data()
-  #TarkovWiki.get_page_HTML('weapons', over_write = False)
-
-  parse_weapon_data()
+  #parse_map_data() #done
+  #parse_weapon_data() #done
+  #parse_ammo_data()
+  parse_armor_data()
+  #parse_rig_data()
+  #parse_backpack_data()
+  #parse_helmet_data()
