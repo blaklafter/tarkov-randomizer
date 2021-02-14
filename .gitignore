@@ -9,4 +9,7 @@ pyvenv.cfg
 # saved data
 data/*
 
+# dotenv files
+.env
+
 

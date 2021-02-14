@@ -1,9 +1,13 @@
 import os
 import pprint
+from pymongo.operations import UpdateOne
 import requests
 
 from bs4 import BeautifulSoup
+from dotenv import load_dotenv
+from pymongo import MongoClient, UpdateMany
 
+load_dotenv()
 pp = pprint.PrettyPrinter(indent=4)
 
 class TarkovWiki:
@@ -12,31 +16,37 @@ class TarkovWiki:
       {
         'url': 'https://escapefromtarkov.gamepedia.com/Map_of_Tarkov',
         'url_save': 'map.html',
+        'unique_field': 'Name',
       },
       'weapons':
       {
         'url': 'https://escapefromtarkov.gamepedia.com/Weapons',
         'url_save': 'weapon.html',
+        'unique_field': 'Name',
       },
       'armor':
       {
         'url': 'https://escapefromtarkov.gamepedia.com/Armor_vests',
-        'url_save': 'armor.html'
+        'url_save': 'armor.html',
+        'unique_field': 'Name',
       },
       'backpacks':
       {
         'url': 'https://escapefromtarkov.gamepedia.com/Backpacks',
-        'url_save': 'backpack.html'
+        'url_save': 'backpack.html',
+        'unique_field': 'Name',
       },
       'rigs':
       {
         'url': 'https://escapefromtarkov.gamepedia.com/Chest_rigs',
-        'url_save': 'rig.html'
+        'url_save': 'rig.html',
+        'unique_field': 'Name',
       },
       'headwear':
       {
         'url': 'https://escapefromtarkov.gamepedia.com/Headwear',
-        'url_save': 'headwear.html'
+        'url_save': 'headwear.html',
+        'unique_field': 'Name',
       },
     }
   
@@ -163,19 +173,23 @@ def get_data_items(bs_node, nodes):
     metadata_items.append(md)
   return metadata_items
 
+def get_db(client, database):
+  return client[database]
+
 if __name__ == '__main__':
+
+  client = MongoClient(os.getenv('MONGO_CONN_STR'))
+  db = get_db(client, os.getenv('DATABASE'))
+
   over_write = False
 
-  armor = parse_data('armor', over_write)
-  maps = parse_data('maps', over_write)
-  weapons = parse_data('weapons', over_write)
-  backpacks = parse_data('backpacks', over_write)
-  rig = parse_data('rigs', over_write)
-  headwear = parse_data('headwear', over_write)
+  for data_type in TarkovWiki.data_types:
+    pp.pprint("Processing: {0}".format(data_type))
+    parsed_data = parse_data(data_type, over_write)
 
-  pp.pprint(maps)
-  #pp.pprint(armor)
-  #pp.pprint(weapons)
-  #pp.pprint(backpacks)
-  #pp.pprint(rig)
-  #pp.pprint(headwear)
+    unique_field = TarkovWiki.data_types[data_type]['unique_field']
+
+    db[data_type].create_index(unique_field, unique=True)
+    for m in parsed_data:
+      result = db[data_type].replace_one({unique_field: m[unique_field]}, m, upsert=True)
+      print("matched: {0}, modified: {1}, upsertedId: {2}".format(result.matched_count, result.modified_count, result.upserted_id))
