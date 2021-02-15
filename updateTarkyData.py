@@ -1,11 +1,10 @@
 import os
 import pprint
-from pymongo.operations import UpdateOne
 import requests
 
 from bs4 import BeautifulSoup
 from dotenv import load_dotenv
-from pymongo import MongoClient, UpdateMany
+from pymongo import MongoClient
 
 load_dotenv()
 pp = pprint.PrettyPrinter(indent=4)
@@ -190,6 +189,12 @@ if __name__ == '__main__':
     unique_field = TarkovWiki.data_types[data_type]['unique_field']
 
     db[data_type].create_index(unique_field, unique=True)
+    matched = 0
+    modified = 0
+    upserted = 0
     for m in parsed_data:
       result = db[data_type].replace_one({unique_field: m[unique_field]}, m, upsert=True)
-      print("matched: {0}, modified: {1}, upsertedId: {2}".format(result.matched_count, result.modified_count, result.upserted_id))
+      matched = matched + result.matched_count
+      modified = modified + result.modified_count
+      upserted = upserted + 1 if result.upserted_id else 0
+    print("{0} -- matched: {1}, modified: {2}, upserted: {3}".format(data_type, matched, modified, upserted))
