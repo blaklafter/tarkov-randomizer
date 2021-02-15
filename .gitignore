@@ -12,4 +12,7 @@ data/*
 # dotenv files
 .env
 
+# node stuff
+node_modules/
+
 
