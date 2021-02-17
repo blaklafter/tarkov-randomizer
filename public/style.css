@@ -1,3 +1,15 @@
 body {
   background-color: red;
 }
+
+.rotate-me {
+  -webkit-animation-iteration-count: infinite;
+  -webkit-animation-duration: 8s;
+  -webkit-animation-name: rotate;
+  -webkit-animation-timing-function: linear;
+}
+
+@-webkit-keyframes rotate {
+  0% {-webkit-transform: rotate(0deg);}
+  100% {-webkit-transform: rotate(359deg);}
+}
