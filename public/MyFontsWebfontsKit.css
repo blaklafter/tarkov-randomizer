@@ -1,0 +1,27 @@
+/**
+ * @license
+ * MyFonts Webfont Build ID 4017892, 2021-02-21T15:54:28-0500
+ * 
+ * The fonts listed in this notice are subject to the End User License
+ * Agreement(s) entered into by the website owner. All other parties are 
+ * explicitly restricted from using the Licensed Webfonts(s).
+ * 
+ * You may obtain a valid license at the URLs below.
+ * 
+ * Webfont: Bender by Jovanny Lemonad
+ * URL: https://www.myfonts.com/fonts/jovanny-lemonad/bender/regular/
+ * Copyright: Copyright (c) 2009 by Oleg Zhuravlev, Gladkikh Ivan. All rights reserved.
+ * 
+ * 
+ * 
+ * © 2021 MyFonts Inc
+*/
+
+
+
+  
+@font-face {
+  font-family: "Bender";
+  src: url('webFonts/Bender/font.woff2') format('woff2'), url('webFonts/Bender/font.woff') format('woff');
+}
+

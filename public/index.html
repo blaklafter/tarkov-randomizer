@@ -1,35 +1,72 @@
 <!DOCTYPE html>
 <html>
   <head>
+    <!--
+    /**
+    * @license
+    * MyFonts Webfont Build ID 330580
+    *
+    * The fonts listed in this notice are subject to the End User License
+    * Agreement(s) entered into by the website owner. All other parties are
+    * explicitly restricted from using the Licensed Webfonts(s).
+    *
+    * You may obtain a valid license from one of MyFonts official sites.
+    * http://www.fonts.com
+    * http://www.myfonts.com
+    * http://www.linotype.com
+    *
+    */
+    -->
+    <link rel="stylesheet" type="text/css" href="MyFontsWebfontsKit.css">
     <link rel="stylesheet" href="style.css">
+    <script src="pureknob/pureknob.js" type="text/javascript"></script>
     <script src=scripts.js defer></script>
   </head>
   <body onload='getAllItems()'>
   <h1>Tarkov Randomizer</h1>
   <div id="container">
-    <div id="map" class="item-container" onclick="getItems(this.id)">
+    <div id="map" class="item-container">
+      <div class="none-selector"></div>
       <div class="item-title">Map</div>
-      <div class="item-name">{{Map goes here}}</div>
+      <div class="item-details" onclick="getItems(this.parentElement.id)">   
+        <div class="item-name"></div>
+      </div>
     </div>
-    <div id="weapon" class="item-container" onclick="getItems(this.id)">
+    <div id="weapon" class="item-container">
+      <div class="none-selector"></div>
       <div class="item-title">Weapon</div>
-      <div class="item-name">{{Weapon goes here}}</div>
+      <div class="item-details" onclick="getItems(this.parentElement.id)">
+        
+        <div class="item-name"></div>
+      </div>
     </div>
-    <div id="headwear" class="item-container" onclick="getItems(this.id)">
+    <div id="headwear" class="item-container">
+      <div class="none-selector"></div>
       <div class="item-title">Headwear</div>
-      <div class="item-name">{{Headwear goes here}}</div>
+      <div class="item-details" onclick="getItems(this.parentElement.id)">
+        <div class="item-name"></div>
+      </div>
     </div>
-    <div id="armor" class="item-container" onclick="getItems(this.id)">
+    <div id="armor" class="item-container">
+      <div class="none-selector"></div>
       <div class="item-title">Armor</div>
-      <div class="item-name">{{Armor goes here}}</div>
+      <div class="item-details" onclick="getItems(this.parentElement.id)">
+        <div class="item-name"></div>
+      </div>
     </div>
-    <div id="rig" class="item-container" onclick="getItems(this.id)">
+    <div id="rig" class="item-container">
+      <div class="none-selector"></div>
       <div class="item-title">Rig</div>
-      <div class="item-name">{{Rig goes here}}</div>
+      <div class="item-details" onclick="getItems(this.parentElement.id)">
+        <div class="item-name"></div>
+      </div>
     </div>
-    <div id="backpack" class="item-container" onclick="getItems(this.id)">
+    <div id="backpack" class="item-container">
+      <div class="none-selector"></div>
       <div class="item-title">Backpack</div>
-      <div class="item-name">{{Backpack goes here}}</div>
+      <div class="item-details" onclick="getItems(this.parentElement.id)">
+        <div class="item-name"></div>
+      </div>
     </div>
   </div>
 

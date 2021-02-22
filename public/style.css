@@ -12,8 +12,17 @@ h1 {
 
 div#container {
   background-color: black;
-  width: 400px;
+  width: 900px;
   margin: 0 auto;
+}
+
+div.none-selector {
+  background-color: black;
+  width: 70px;
+  /* left: 80px; */
+  height: 70px;
+  position: relative;
+  float: right;
 }
 
 div.item-container {
@@ -25,9 +34,13 @@ div.item-container {
 
   padding: 5px;
   margin: 15px;
+  height: 70px;
 
   white-space: nowrap;
+}
 
+div.item-details {
+  overflow: hidden;
   user-select: none;
   cursor: pointer;
 }
@@ -42,10 +55,36 @@ div.item-title {
   padding-right: 2px;
   padding-left: 2px;
   border-radius: 5px;
+
+  user-select: none;
+  cursor: default;
 }
 
 div.item-name {
   position: relative;
+  text-align: left;
+  font-size: x-large;
+  color: yellow;
+}
 
-  text-align: center;
+div.add-text {
+  animation-duration: 500ms;
+  animation-name: slidein;
+  animation-iteration-count: 2;
+  animation-direction: alternate;
+}
+
+@keyframes slidein {
+  
+  from {
+    margin-top: 0px;
+    margin-left: 0%;
+    width: 100%;
+  }
+  
+  to {
+    margin-top: 0px;
+    margin-left: 100%;
+    width: 300%;
+  }
 }
