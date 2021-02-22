@@ -22,14 +22,14 @@
     <script src="pureknob/pureknob.js" type="text/javascript"></script>
     <script src=scripts.js defer></script>
   </head>
-  <body onload='getAllItems()'>
+  <body onload='getAllItems(1)'>
   <h1>Tarkov Randomizer</h1>
   <div id="container">
     <div id="map" class="item-container">
       <div class="none-selector"></div>
       <div class="item-title">Map</div>
       <div class="item-details" onclick="getItems(this.parentElement.id)">   
-        <div class="item-name"></div>
+        <div class="item-name">None</div>
       </div>
     </div>
     <div id="weapon" class="item-container">
@@ -37,37 +37,47 @@
       <div class="item-title">Weapon</div>
       <div class="item-details" onclick="getItems(this.parentElement.id)">
         
-        <div class="item-name"></div>
+        <div class="item-name">None</div>
       </div>
     </div>
     <div id="headwear" class="item-container">
       <div class="none-selector"></div>
       <div class="item-title">Headwear</div>
       <div class="item-details" onclick="getItems(this.parentElement.id)">
-        <div class="item-name"></div>
+        <div class="item-name">None</div>
       </div>
     </div>
     <div id="armor" class="item-container">
       <div class="none-selector"></div>
       <div class="item-title">Armor</div>
       <div class="item-details" onclick="getItems(this.parentElement.id)">
-        <div class="item-name"></div>
+        <div class="item-name">None</div>
       </div>
     </div>
     <div id="rig" class="item-container">
       <div class="none-selector"></div>
       <div class="item-title">Rig</div>
       <div class="item-details" onclick="getItems(this.parentElement.id)">
-        <div class="item-name"></div>
+        <div class="item-name">None</div>
       </div>
     </div>
     <div id="backpack" class="item-container">
       <div class="none-selector"></div>
       <div class="item-title">Backpack</div>
       <div class="item-details" onclick="getItems(this.parentElement.id)">
-        <div class="item-name"></div>
+        <div class="item-name">None</div>
       </div>
     </div>
+  </div>
+
+  <div id="reRollAll" onclick="getAllItems()">Reroll All</div>
+
+  <div id="instructions">
+    <div class="title">Instructions</div>
+    <div class="description">Quickly generate randomized loadouts for your PMC in Escape From Tarkov.</div>
+    <div class="tips">Click the indivdual sections to reroll that item</div>
+    <div class="tips">The control on the right side of each item controls the percent chance of rolling a "None"</div>
+    <div class="tips">The list of items is updated automatically from the <a href="https://escapefromtarkov.gamepedia.com/Escape_from_Tarkov_Wiki">the wiki</a> check it out!</div>
   </div>
 
 

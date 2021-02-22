@@ -6,14 +6,22 @@ const items = [
   { 'id': 'rig', 'url': 'rigs'},
   { 'id': 'armor', 'url': 'armor'}];
 
-const knobs = {};
+const knobs = {
+  'map': 0,
+  'weapon': 5,
+  'headwear': 10,
+  'armor': 10,
+  'rig': 10,
+  'backpack': 10
+};
 
-const getAllItems = () => {
+const getAllItems = (initial) => {
   itemList = [...items]
 
   while(itemList.length > 0) {
     item = itemList.pop();
-    if(item.id !== 'map') {
+    //only add a knob onload and don't add one for the maps cause that would be stupid
+    if(initial && item.id !== 'map') {
       zeroKnob(item.id);
     }
     getItems(item);
@@ -91,10 +99,9 @@ const chooseRandom = (items) => {
 };
 
 function zeroKnob(elementId) {
-  const defaultKnobValue = 10;
+  const defaultKnobValue = knobs[elementId];
   // Create knob element, 70 x 70 px in size.
   const knob = pureknob.createKnob(70, 70);
-  knobs[elementId] = defaultKnobValue;
 
   // Set properties.
   knob.setProperty('angleStart', -0.75 * Math.PI);
@@ -105,7 +112,7 @@ function zeroKnob(elementId) {
   knob.setProperty('valMax', 100);
 
   // Set initial value.
-  knob.setValue(defaultKnobValue);
+  knob.setValue(defaultKnobValue || 0);
 
   /*
    * Event listener.

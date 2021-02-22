@@ -16,10 +16,50 @@ div#container {
   margin: 0 auto;
 }
 
+div#reRollAll {
+  position: relative;
+  top: 20px;
+  background-color: darkred;
+  width: 800px;
+  margin: 0 auto;
+  border-style: solid;
+  border-color: #404040;
+  border-radius: 5px;
+  text-align: center;
+  padding: 2px;
+  font-weight: 600;
+
+  cursor: pointer;
+  user-select: none;
+}
+
+div#instructions {
+  position: relative;
+  top: 60px;
+  background-color: gray;
+  padding: 10px;
+}
+
+div.title {
+  font-weight: bold;
+  border-bottom: black;
+}
+
+div.description {
+  padding-top: 5px;
+  padding-bottom: 5px;
+
+}
+
+div.tips {
+  display: list-item;          /* This has to be "list-item"                                               */
+  list-style-type: disc;       /* See https://developer.mozilla.org/en-US/docs/Web/CSS/list-style-type     */
+  list-style-position: inside;
+}
+
 div.none-selector {
   background-color: black;
   width: 70px;
-  /* left: 80px; */
   height: 70px;
   position: relative;
   float: right;
