@@ -89,7 +89,7 @@ privateApp.get('/updateData', (req, res) => {
 
 privateApp.listen(privatePort, 'localhost', () => {
   logger.info(`tarkov-randomizer private api listening at http://localhost:${privatePort}`);
-})
+});
 
 const updateData = () => {
   child_process.exec('bin/python updateTarkyData.py', (err, stdout, stderr) => {
@@ -102,3 +102,5 @@ const updateData = () => {
     logger.debug(stdout);
   });
 }
+
+setInterval(updateData, 1000 * 60 * 60 * 12); // Update every 12 hours

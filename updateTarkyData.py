@@ -180,7 +180,8 @@ if __name__ == '__main__':
   client = MongoClient(os.getenv('MONGO_CONN_STR'))
   db = get_db(client, os.getenv('DATABASE'))
 
-  over_write = False
+  # Setting this to False will not get new data from the wiki if data already exists
+  over_write = True
 
   for data_type in TarkovWiki.data_types:
     pp.pprint("Processing: {0}".format(data_type))
