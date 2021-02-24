@@ -2,6 +2,10 @@
   "name": "tarkov-randomizer",
   "version": "1.0.0",
   "description": "Randomize your Tarkov experience",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/blaklafter/tarkov-randomizer.git"
+  },
   "main": "server.js",
   "directories": {
     "lib": "lib"
@@ -15,7 +19,9 @@
   "dependencies": {
     "dotenv": "^8.2.0",
     "express": "^4.17.1",
-    "mongodb": "^3.6.4"
+    "express-pino-logger": "^6.0.0",
+    "mongodb": "^3.6.4",
+    "pino": "^6.11.1"
   },
   "devDependencies": {
     "nodemon": "^2.0.7"

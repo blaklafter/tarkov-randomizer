@@ -8,6 +8,7 @@ pyvenv.cfg
 
 # saved data
 data/*
+logs/tarkov-randomizer.log
 
 # dotenv files
 .env

@@ -1,4 +1,11 @@
+const child_process = require('child_process');
 const express = require('express');
+const pino = require('pino')("./logs/tarkov-randomizer.log");
+const expressPino = require('express-pino-logger')({
+  logger: pino});
+
+logger = expressPino.logger;
+
 const MongoClient = require('mongodb').MongoClient;
 const assert = require('assert');
 
@@ -26,7 +33,10 @@ const findDocuments = async (c, col, filter) => {
 const app = express();
 const port = 3000;
 
-app.use('/', express.static('public'));
+app.use(expressPino);
+app.use('/', (req, res, next) => {
+  next();
+}, express.static('public'));
 
 app.get('/maps', async (req, res) => {
   docs = await findDocuments(mongodb, 'maps', {'Release State': 'Released', 'Name': {'$ne': 'Hideout'}});
@@ -61,5 +71,34 @@ app.get('/headwear', async (req, res) => {
 });
 
 app.listen(port, () => {
-  console.log(`Example app listening at http://localhost:${port}`);
+  logger.info(`tarkov-randomizer listening at http://localhost:${port}`);
 });
+
+const privateApp = express();
+const privatePort = 3001;
+privateApp.use(expressPino);
+
+privateApp.use('/', (req, res, next) => {
+  next();
+}, express.static('private'));
+
+privateApp.get('/updateData', (req, res) => {
+  updateData();
+  res.send('OK');
+});
+
+privateApp.listen(privatePort, 'localhost', () => {
+  logger.info(`tarkov-randomizer private api listening at http://localhost:${privatePort}`);
+})
+
+const updateData = () => {
+  child_process.exec('bin/python updateTarkyData.py', (err, stdout, stderr) => {
+    if (err) {
+      console.log(err)
+      logger.error(err);
+      return;
+    }
+    console.log(stdout)
+    logger.debug(stdout);
+  });
+}
