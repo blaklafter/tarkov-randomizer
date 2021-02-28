@@ -38,6 +38,15 @@ div#instructions {
   top: 60px;
   background-color: gray;
   padding: 10px;
+  border-radius: 5px;
+}
+
+div#jibberjabber {
+  top: 65px;
+  position: relative;
+  background-color: darkgrey;
+  padding: 10px;
+  border-radius: 5px;
 }
 
 div.title {
