@@ -1,10 +1,10 @@
 const items = [
-  { 'id': 'weapon', 'url': 'weapons'},
-  { 'id': 'map', 'url': 'maps' },
-  { 'id': 'headwear', 'url': 'headwear' },
-  { 'id': 'backpack', 'url': 'backpacks'},
-  { 'id': 'rig', 'url': 'rigs'},
-  { 'id': 'armor', 'url': 'armor'}];
+  { 'id': 'weapon', 'url': 'weapons', 'data': null, 'lastUpdate': null },
+  { 'id': 'map', 'url': 'maps', 'data': null, 'lastUpdate': null },
+  { 'id': 'headwear', 'url': 'headwear', 'data': null, 'lastUpdate': null },
+  { 'id': 'backpack', 'url': 'backpacks', 'data': null, 'lastUpdate': null },
+  { 'id': 'rig', 'url': 'rigs', 'data': null, 'lastUpdate': null },
+  { 'id': 'armor', 'url': 'armor', 'data': null, 'lastUpdate': null }];
 
 const knobs = {
   'map': 0,
@@ -15,17 +15,40 @@ const knobs = {
   'backpack': 10
 };
 
-const getAllItems = (initial) => {
+const getAllItems = async (initial) => {
   itemList = [...items]
 
   while(itemList.length > 0) {
     item = itemList.pop();
+
     //only add a knob onload and don't add one for the maps cause that would be stupid
     if(initial && item.id !== 'map') {
       zeroKnob(item.id);
     }
+
+    await fetchItemData(item.id);
     getItems(item);
   }
+};
+
+const fetchItemData = async (item) => {
+  const idx = items.findIndex(i => i.id === item);
+  refreshMS = 1000 * 60 * 10; // update if it hasn't been updated in 10 minutes
+
+  console.log(items[idx])
+
+  if(!items[idx].data || Date.now() - refreshMS >= items[idx].lastUpdate) {
+    console.log(`yeah, I'll fetch ${items[idx].id}`)
+    const url = items[idx].url;
+
+    const data = await fetch(url);
+    const res = await data.text();
+    items[idx].data = JSON.parse(res);
+    items[idx].lastUpdate = Date.now();
+    return;
+  }
+
+  console.log(`No need to fetch ${items[idx].id} yet.`)
 };
 
 const getItems = (item) => {
@@ -38,8 +61,9 @@ const getItems = (item) => {
   }
 
   const itemElement = (specifiedItem) => document.getElementById(specifiedItem || item.id).querySelectorAll('div.item-name')[0];
+  
+  // text change animation
   itemElement().classList.add('add-text');
-
   setTimeout(() => {itemElement().classList.remove('add-text');}, 1000);
 
   // map cannot be None
@@ -48,15 +72,15 @@ const getItems = (item) => {
 
     chanceForNone = selectedChanceForNone || 0;
 
+    // is None is "rolled" then we don't need to get a random item
     if(Math.random() * 100 <= chanceForNone) {
       updateElement(item, "None");
       return;
     }
   }
   
-  const url = item.url;
-  fetch(url)
-  .then(data => updateElement(item, data))
+  updateElement(item, item.data);
+  fetchItemData(item.id);
 };
 
 const updateElement = (item, data) => {
@@ -67,33 +91,28 @@ const updateElement = (item, data) => {
     return;
   }
 
-  data.text()
-  .then(res => {
-    selectedItem = chooseRandom(JSON.parse(res));
+  selectedItem = chooseRandom(data);
 
-    // check for armored rig, if it is, make armor "None"
-    if(item.id === 'rig'){
-      if(selectedItem['type'] == 'Armored'){
-        //itemElement('armor').textContent = 'None';
-        delayedUpdate(itemElement('armor'), 'None', 250)
-      }
-      //itemElement().textContent = selectedItem['name'];
-      delayedUpdate(itemElement(), selectedItem['name'], 250)
-      return;
+  // check for armored rig, if it is, make armor "None"
+  if(item.id === 'rig'){
+    if(selectedItem['type'] == 'Armored'){
+      //itemElement('armor').textContent = 'None';
+      delayedUpdate(itemElement('armor'), 'None', 250)
     }
+    //itemElement().textContent = selectedItem['name'];
+    delayedUpdate(itemElement(), selectedItem['name'], 250)
+    return;
+  }
 
-    //itemElement().textContent = selectedItem;
-    delayedUpdate(itemElement(), selectedItem, 250)
-  })
+  //itemElement().textContent = selectedItem;
+  delayedUpdate(itemElement(), selectedItem, 250)
 };
 
 const delayedUpdate = (element, elementText, msDelay) => {
-    setTimeout(() => {element.textContent = elementText}, msDelay);
-
+  setTimeout(() => {element.textContent = elementText}, msDelay);
 };
 
 const chooseRandom = (items) => {
-  
   const item = items[Math.floor(Math.random() * items.length)];
   return item
 };
