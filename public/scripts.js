@@ -35,10 +35,7 @@ const fetchItemData = async (item) => {
   const idx = items.findIndex(i => i.id === item);
   refreshMS = 1000 * 60 * 10; // update if it hasn't been updated in 10 minutes
 
-  console.log(items[idx])
-
   if(!items[idx].data || Date.now() - refreshMS >= items[idx].lastUpdate) {
-    console.log(`yeah, I'll fetch ${items[idx].id}`)
     const url = items[idx].url;
 
     const data = await fetch(url);
@@ -47,8 +44,6 @@ const fetchItemData = async (item) => {
     items[idx].lastUpdate = Date.now();
     return;
   }
-
-  console.log(`No need to fetch ${items[idx].id} yet.`)
 };
 
 const getItems = (item) => {
