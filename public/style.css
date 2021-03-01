@@ -76,10 +76,10 @@ div.none-selector {
 
 div.item-container {
   background-color: black;
-  color: greenyellow;
+  color: green;
 
   border-style: solid;
-  border-color: greenyellow;
+  border-color: green;
 
   padding: 5px;
   margin: 15px;
@@ -121,6 +121,11 @@ div.add-text {
   animation-name: slidein;
   animation-iteration-count: 2;
   animation-direction: alternate;
+}
+
+.conflicting-item {
+  text-decoration: line-through;
+  color: red !important;
 }
 
 @keyframes slidein {

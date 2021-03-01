@@ -83,23 +83,25 @@ const updateElement = (item, data) => {
   
   if(data === 'None') {
     itemElement().textContent = data;
+    if(item.id === 'rig') {
+      itemElement('armor').classList.remove('conflicting-item');
+    }
     return;
   }
 
   selectedItem = chooseRandom(data);
 
-  // check for armored rig, if it is, make armor "None"
+  // check for armored rig, if it is, mark the armor as conflicting
   if(item.id === 'rig'){
     if(selectedItem['type'] == 'Armored'){
-      //itemElement('armor').textContent = 'None';
-      delayedUpdate(itemElement('armor'), 'None', 250)
+      itemElement('armor').classList.add('conflicting-item');
+    } else {
+      itemElement('armor').classList.remove('conflicting-item');
     }
-    //itemElement().textContent = selectedItem['name'];
     delayedUpdate(itemElement(), selectedItem['name'], 250)
     return;
   }
 
-  //itemElement().textContent = selectedItem;
   delayedUpdate(itemElement(), selectedItem, 250)
 };
 
