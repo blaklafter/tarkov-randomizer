@@ -13,37 +13,37 @@ class TarkovWiki:
   data_types = {
       'maps':
       {
-        'url': 'https://escapefromtarkov.gamepedia.com/Map_of_Tarkov',
+        'url': 'https://escapefromtarkov.fandom.com/Map_of_Tarkov',
         'url_save': 'map.html',
         'unique_field': 'Name',
       },
       'weapons':
       {
-        'url': 'https://escapefromtarkov.gamepedia.com/Weapons',
+        'url': 'https://escapefromtarkov.fandom.com/Weapons',
         'url_save': 'weapon.html',
         'unique_field': 'Name',
       },
       'armor':
       {
-        'url': 'https://escapefromtarkov.gamepedia.com/Armor_vests',
+        'url': 'https://escapefromtarkov.fandom.com/Armor_vests',
         'url_save': 'armor.html',
         'unique_field': 'Name',
       },
       'backpacks':
       {
-        'url': 'https://escapefromtarkov.gamepedia.com/Backpacks',
+        'url': 'https://escapefromtarkov.fandom.com/Backpacks',
         'url_save': 'backpack.html',
         'unique_field': 'Name',
       },
       'rigs':
       {
-        'url': 'https://escapefromtarkov.gamepedia.com/Chest_rigs',
+        'url': 'https://escapefromtarkov.fandom.com/Chest_rigs',
         'url_save': 'rig.html',
         'unique_field': 'Name',
       },
       'headwear':
       {
-        'url': 'https://escapefromtarkov.gamepedia.com/Headwear',
+        'url': 'https://escapefromtarkov.fandom.com/Headwear',
         'url_save': 'headwear.html',
         'unique_field': 'Name',
       },
@@ -58,7 +58,10 @@ class TarkovWiki:
 
   @staticmethod
   def download_page_HTML(url):
-    mapPageData = requests.get(url)
+    headers = {
+      'User-Agent': 'tarkov-randomizer/0.2 (https://tarkov-randomizer.com; isaacschwarz3@gmail.com) python-requests/2.22 bot'
+    }
+    mapPageData = requests.get(url, headers)
     return mapPageData.text
 
   @staticmethod
