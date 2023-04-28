@@ -1,3 +1,5 @@
+# NO LONGER MAINTAINED/IN-USE
+
 # tarkov-randomizer
 Randomized Tarkov loadouts that auto update
 
